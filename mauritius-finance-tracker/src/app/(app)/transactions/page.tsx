@@ -97,12 +97,29 @@ export default async function TransactionsPage({
     }),
   ]);
 
+  type CategoryRow = { id: string; name: string };
+  type TotalsRow = { categoryId: string | null; _sum: { amount: unknown | null } };
+  type TransactionRow = {
+    id: string;
+    description: string;
+    date: Date;
+    merchant: string | null;
+    amount: unknown;
+    currency: string;
+    categoryId: string | null;
+    account: string | null;
+    paymentMethod: string | null;
+    category?: { name: string } | null;
+  };
+
   const totalsByCategory = totals
-    .map((row) => {
-      const category = categories.find((c) => c.id === row.categoryId)?.name || "Uncategorized";
+    .map((row: TotalsRow) => {
+      const category =
+        categories.find((c: CategoryRow) => c.id === row.categoryId)?.name ||
+        "Uncategorized";
       return { category, amount: Number(row._sum.amount ?? 0) };
     })
-    .sort((a, b) => b.amount - a.amount);
+    .sort((a: { amount: number }, b: { amount: number }) => b.amount - a.amount);
 
   return (
     <div className="space-y-6 pb-20">
@@ -154,7 +171,7 @@ export default async function TransactionsPage({
           </select>
           <select name="categoryId" className="rounded-xl border border-slate-200 px-3 py-2">
             <option value="">Auto-categorize</option>
-            {categories.map((cat) => (
+            {categories.map((cat: CategoryRow) => (
               <option key={cat.id} value={cat.id}>{cat.name}</option>
             ))}
           </select>
@@ -180,7 +197,7 @@ export default async function TransactionsPage({
               className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
             >
               <option value="">All categories</option>
-              {categories.map((cat) => (
+              {categories.map((cat: CategoryRow) => (
                 <option key={cat.id} value={cat.id}>{cat.name}</option>
               ))}
             </select>
@@ -191,7 +208,7 @@ export default async function TransactionsPage({
           {totalsByCategory.length === 0 && (
             <p className="text-sm text-slate-500">No transactions for this month.</p>
           )}
-          {totalsByCategory.map((item) => (
+          {totalsByCategory.map((item: { category: string; amount: number }) => (
             <div key={item.category} className="flex justify-between">
               <span className="text-sm text-slate-600">{item.category}</span>
               <span className="font-medium">{formatCurrency(item.amount)}</span>
@@ -206,7 +223,7 @@ export default async function TransactionsPage({
           {transactions.length === 0 && (
             <p className="text-sm text-slate-500">No transactions found.</p>
           )}
-          {transactions.map((tx) => (
+          {transactions.map((tx: TransactionRow) => (
             <div key={tx.id} className="border border-slate-200 rounded-2xl p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -222,7 +239,7 @@ export default async function TransactionsPage({
                   <input type="hidden" name="id" value={tx.id} />
                   <select name="categoryId" defaultValue={tx.categoryId || ""} className="rounded-xl border border-slate-200 px-3 py-2 text-sm">
                     <option value="">Uncategorized</option>
-                    {categories.map((cat) => (
+                    {categories.map((cat: CategoryRow) => (
                       <option key={cat.id} value={cat.id}>{cat.name}</option>
                     ))}
                   </select>

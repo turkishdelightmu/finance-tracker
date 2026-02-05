@@ -1,4 +1,4 @@
-import { PrismaClient } from "@/generated/prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { PrismaNeon } from "@prisma/adapter-neon";
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
@@ -16,7 +16,7 @@ const prismaOptions = shouldUseNeon
       log: process.env.NODE_ENV === "development" ? ["warn", "error"] : ["error"],
     };
 
-export const prisma =
+export const prisma: PrismaClient =
   globalForPrisma.prisma ?? new PrismaClient(prismaOptions as any);
 
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;

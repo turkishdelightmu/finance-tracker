@@ -42,16 +42,42 @@ export default async function DashboardPage() {
     _sum: { amount: true },
   });
 
-  const categoryLookup = new Map(categories.map((c) => [c.id, c]));
-  const totals = totalsByCategory
-    .map((row) => ({
+  const categoryLookup = new Map<string, { name: string }>(
+    categories.map((c: { id: string; name: string }) => [c.id, c]),
+  );
+  type TotalsRow = { categoryId: string | null; _sum: { amount: unknown | null } };
+  type TotalsEntry = { category: string; amount: number };
+  type TxRow = {
+    id: string;
+    description: string;
+    date: Date;
+    category?: { name: string } | null;
+    amount: unknown;
+    currency: string;
+  };
+  type BillRow = {
+    id: string;
+    name: string;
+    nextDueDate: Date;
+    expectedAmount: unknown;
+  };
+  type NotificationRow = {
+    id: string;
+    title: string;
+    body: string;
+    createdAt: Date;
+  };
+  const totals: TotalsEntry[] = totalsByCategory
+    .map((row: TotalsRow) => ({
       category: categoryLookup.get(row.categoryId ?? "")?.name ?? "Uncategorized",
       amount: Number(row._sum.amount ?? 0),
     }))
-    .sort((a, b) => b.amount - a.amount);
+    .sort((a: TotalsEntry, b: TotalsEntry) => b.amount - a.amount);
 
+  type HoldingRow = { quantity: unknown; price: unknown };
   const portfolioValue = holdings.reduce(
-    (sum, holding) => sum + Number(holding.quantity) * Number(holding.price),
+    (sum: number, holding: HoldingRow) =>
+      sum + Number(holding.quantity) * Number(holding.price),
     0,
   );
 
@@ -82,7 +108,7 @@ export default async function DashboardPage() {
             {transactions.length === 0 && (
               <p className="text-sm text-slate-500">No recent activity.</p>
             )}
-            {transactions.map((tx) => (
+            {transactions.map((tx: TxRow) => (
               <div key={tx.id} className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium">{tx.description}</p>
@@ -103,7 +129,7 @@ export default async function DashboardPage() {
             {bills.length === 0 && (
               <p className="text-sm text-slate-500">No upcoming bills.</p>
             )}
-            {bills.map((bill) => (
+            {bills.map((bill: BillRow) => (
               <div key={bill.id} className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium">{bill.name}</p>
@@ -144,7 +170,7 @@ export default async function DashboardPage() {
           {notifications.length === 0 && (
             <p className="text-sm text-slate-500">No notifications yet.</p>
           )}
-          {notifications.map((note) => (
+          {notifications.map((note: NotificationRow) => (
             <div key={note.id} className="border border-slate-200 rounded-xl p-3">
               <p className="text-sm font-medium">{note.title}</p>
               <p className="text-xs text-slate-500">{note.body}</p>

@@ -88,6 +88,20 @@ export default async function InvestmentsPage({
     where: { userId: user.id },
     include: { holdings: true, transactions: true },
   });
+  type HoldingRow = {
+    id: string;
+    symbol: string;
+    name: string;
+    quantity: unknown;
+    price: unknown;
+    avgCost: unknown;
+  };
+  type AccountRow = {
+    id: string;
+    name: string;
+    institution: string | null;
+    holdings: HoldingRow[];
+  };
 
   return (
     <div className="space-y-6 pb-20">
@@ -125,9 +139,10 @@ export default async function InvestmentsPage({
         </div>
       )}
 
-      {accounts.map((account) => {
+      {accounts.map((account: AccountRow) => {
         const portfolioValue = account.holdings.reduce(
-          (sum, holding) => sum + Number(holding.quantity) * Number(holding.price),
+          (sum: number, holding: HoldingRow) =>
+            sum + Number(holding.quantity) * Number(holding.price),
           0,
         );
         return (
@@ -146,7 +161,7 @@ export default async function InvestmentsPage({
                 {account.holdings.length === 0 && (
                   <p className="text-sm text-slate-500">No holdings yet.</p>
                 )}
-                {account.holdings.map((holding) => {
+                {account.holdings.map((holding: HoldingRow) => {
                   const value = Number(holding.quantity) * Number(holding.price);
                   const cost = Number(holding.quantity) * Number(holding.avgCost);
                   const pnl = value - cost;

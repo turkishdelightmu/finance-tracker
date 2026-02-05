@@ -1,4 +1,14 @@
-import type { CategorizationRule, KeywordDictionary } from "@/generated/prisma/client";
+type CategorizationRule = {
+  priority: number;
+  merchant: string | null;
+  keyword: string | null;
+  categoryId: string;
+};
+
+type KeywordDictionary = {
+  keyword: string;
+  categoryId: string;
+};
 
 function normalize(value?: string | null) {
   return value?.toLowerCase().trim() ?? "";

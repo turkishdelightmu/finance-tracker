@@ -108,7 +108,10 @@ export async function importTransactions(
   ]);
 
   const categoryByName = new Map(
-    categories.map((category) => [category.name.toLowerCase(), category.id]),
+    categories.map((category: { id: string; name: string }) => [
+      category.name.toLowerCase(),
+      category.id,
+    ]),
   );
 
   const errors: { row: number; message: string }[] = [];

@@ -65,6 +65,15 @@ export default async function LoansPage({
   const user = await requireUser();
   const notice = searchParams?.notice;
   const loans = await prisma.loan.findMany({ where: { userId: user.id } });
+  type LoanRow = {
+    id: string;
+    name: string;
+    currentBalance: unknown;
+    apr: unknown;
+    termMonths: number;
+    monthlyPayment: unknown;
+    paymentDay: number;
+  };
 
   return (
     <div className="space-y-6 pb-20">
@@ -105,7 +114,7 @@ export default async function LoansPage({
           {loans.length === 0 && (
             <p className="text-sm text-slate-500">No loans yet.</p>
           )}
-          {loans.map((loan) => {
+          {loans.map((loan: LoanRow) => {
             const schedule = generateAmortizationSchedule(
               Number(loan.currentBalance),
               Number(loan.apr),
@@ -124,7 +133,7 @@ export default async function LoansPage({
                   <div>
                     <p className="font-medium">{loan.name}</p>
                     <p className="text-xs text-slate-500">
-                      Payment day {loan.paymentDay} · APR {loan.apr.toString()}%
+                      Payment day {loan.paymentDay} · APR {String(loan.apr)}%
                     </p>
                   </div>
                   <p className="font-semibold">{formatCurrency(Number(loan.currentBalance))}</p>

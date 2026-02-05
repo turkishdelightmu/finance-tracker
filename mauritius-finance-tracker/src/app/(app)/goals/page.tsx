@@ -53,6 +53,13 @@ export default async function GoalsPage({
     where: { userId: user.id },
     orderBy: { createdAt: "desc" },
   });
+  type GoalRow = {
+    id: string;
+    name: string;
+    targetAmount: unknown;
+    currentAmount: unknown;
+    targetDate: Date;
+  };
 
   return (
     <div className="space-y-6 pb-20">
@@ -89,7 +96,7 @@ export default async function GoalsPage({
           {goals.length === 0 && (
             <p className="text-sm text-slate-500">No goals yet.</p>
           )}
-          {goals.map((goal) => {
+          {goals.map((goal: GoalRow) => {
             const target = Number(goal.targetAmount);
             const current = Number(goal.currentAmount);
             const remaining = Math.max(target - current, 0);

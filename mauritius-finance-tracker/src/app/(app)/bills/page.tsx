@@ -60,6 +60,14 @@ export default async function BillsPage({
     where: { userId: user.id },
     orderBy: { nextDueDate: "asc" },
   });
+  type BillRow = {
+    id: string;
+    name: string;
+    expectedAmount: unknown;
+    nextDueDate: Date;
+    frequency: string;
+    active: boolean;
+  };
 
   return (
     <div className="space-y-6 pb-20">
@@ -108,7 +116,7 @@ export default async function BillsPage({
           {bills.length === 0 && (
             <p className="text-sm text-slate-500">No bills yet.</p>
           )}
-          {bills.map((bill) => (
+          {bills.map((bill: BillRow) => (
             <div key={bill.id} className="border border-slate-200 rounded-2xl p-4">
               <div className="flex items-center justify-between">
                 <div>
