@@ -3,7 +3,9 @@ import { PrismaNeon } from "@prisma/adapter-neon";
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
-const shouldUseNeon = (process.env.DATABASE_URL || "").includes("neon.tech");
+const shouldUseNeon =
+  process.env.VERCEL === "1" ||
+  (process.env.DATABASE_URL || "").includes("neon.tech");
 
 const prismaOptions = shouldUseNeon
   ? {
