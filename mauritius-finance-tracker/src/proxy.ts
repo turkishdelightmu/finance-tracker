@@ -23,7 +23,9 @@ export function proxy(request: NextRequest) {
     "default-src 'self'",
     "img-src 'self' data:",
     "style-src 'self' 'unsafe-inline'",
-    isDev ? "script-src 'self' 'unsafe-eval' 'unsafe-inline'" : "script-src 'self'",
+    isDev
+      ? "script-src 'self' 'unsafe-eval' 'unsafe-inline'"
+      : "script-src 'self' 'unsafe-inline'",
     "object-src 'none'",
     "base-uri 'self'",
     "frame-ancestors 'none'",
