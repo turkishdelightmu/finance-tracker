@@ -1,0 +1,268 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id              String               @id @default(cuid())
+  email           String               @unique
+  passwordHash    String
+  name            String?
+  createdAt       DateTime             @default(now())
+  updatedAt       DateTime             @updatedAt
+  bills           Bill[]
+  rules           CategorizationRule[]
+  categories      Category[]
+  contributions   Contribution[]
+  goals           Goal[]
+  investmentAccts InvestmentAccount[]
+  loans           Loan[]
+  loanPayments    LoanPayment[]
+  notifications   Notification[]
+  auditEvents     AuditEvent[]
+  sessions        Session[]
+  transactions    Transaction[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Category {
+  id           String               @id @default(cuid())
+  userId       String
+  name         String
+  color        String?
+  createdAt    DateTime             @default(now())
+  updatedAt    DateTime             @updatedAt
+  rules        CategorizationRule[]
+  user         User                 @relation(fields: [userId], references: [id], onDelete: Cascade)
+  keywords     KeywordDictionary[]
+  transactions Transaction[]
+
+  @@unique([userId, name])
+}
+
+model KeywordDictionary {
+  id         String   @id @default(cuid())
+  keyword    String
+  categoryId String
+  isGlobal   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@index([keyword])
+}
+
+model CategorizationRule {
+  id         String   @id @default(cuid())
+  userId     String
+  keyword    String?
+  merchant   String?
+  categoryId String
+  priority   Int      @default(0)
+  createdAt  DateTime @default(now())
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, keyword])
+  @@index([userId, merchant])
+}
+
+model Transaction {
+  id            String            @id @default(cuid())
+  userId        String
+  date          DateTime
+  description   String
+  merchant      String?
+  amount        Decimal           @db.Decimal(14, 2)
+  currency      Currency          @default(MUR)
+  account       String?
+  paymentMethod String?
+  categoryId    String?
+  source        TransactionSource @default(MANUAL)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  billId        String?
+  contributions Contribution[]
+  loanPayments  LoanPayment[]
+  bill          Bill?             @relation(fields: [billId], references: [id])
+  category      Category?         @relation(fields: [categoryId], references: [id])
+  user          User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, date])
+}
+
+model Bill {
+  id             String        @id @default(cuid())
+  userId         String
+  name           String
+  expectedAmount Decimal       @db.Decimal(14, 2)
+  frequency      BillFrequency
+  dueDay         Int?
+  dueDate        DateTime?
+  nextDueDate    DateTime
+  active         Boolean       @default(true)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions   Transaction[]
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  title     String
+  body      String
+  channel   String    @default("in_app")
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model AuditEvent {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String
+  metadata  Json?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model Goal {
+  id            String         @id @default(cuid())
+  userId        String
+  name          String
+  targetAmount  Decimal        @db.Decimal(14, 2)
+  targetDate    DateTime
+  currentAmount Decimal        @default(0) @db.Decimal(14, 2)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  contributions Contribution[]
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Contribution {
+  id            String       @id @default(cuid())
+  userId        String
+  goalId        String
+  amount        Decimal      @db.Decimal(14, 2)
+  date          DateTime     @default(now())
+  transactionId String?
+  goal          Goal         @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  transaction   Transaction? @relation(fields: [transactionId], references: [id])
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Loan {
+  id             String        @id @default(cuid())
+  userId         String
+  name           String
+  principal      Decimal       @db.Decimal(14, 2)
+  apr            Decimal       @db.Decimal(5, 2)
+  termMonths     Int
+  paymentDay     Int
+  monthlyPayment Decimal       @db.Decimal(14, 2)
+  currentBalance Decimal       @db.Decimal(14, 2)
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  payments       LoanPayment[]
+}
+
+model LoanPayment {
+  id            String       @id @default(cuid())
+  userId        String
+  loanId        String
+  amount        Decimal      @db.Decimal(14, 2)
+  date          DateTime
+  principalPaid Decimal      @db.Decimal(14, 2)
+  interestPaid  Decimal      @db.Decimal(14, 2)
+  status        String       @default("PENDING")
+  transactionId String?
+  loan          Loan         @relation(fields: [loanId], references: [id], onDelete: Cascade)
+  transaction   Transaction? @relation(fields: [transactionId], references: [id])
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model InvestmentAccount {
+  id           String                  @id @default(cuid())
+  userId       String
+  name         String
+  institution  String?
+  createdAt    DateTime                @default(now())
+  updatedAt    DateTime                @updatedAt
+  holdings     Holding[]
+  user         User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions InvestmentTransaction[]
+}
+
+model Holding {
+  id        String            @id @default(cuid())
+  accountId String
+  symbol    String
+  name      String
+  quantity  Decimal           @default(0) @db.Decimal(18, 6)
+  price     Decimal           @default(0) @db.Decimal(14, 4)
+  avgCost   Decimal           @default(0) @db.Decimal(14, 4)
+  updatedAt DateTime          @updatedAt
+  account   InvestmentAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  @@unique([accountId, symbol])
+}
+
+model InvestmentTransaction {
+  id        String            @id @default(cuid())
+  accountId String
+  type      InvestmentTxType
+  symbol    String?
+  quantity  Decimal?          @db.Decimal(18, 6)
+  price     Decimal?          @db.Decimal(14, 4)
+  amount    Decimal           @db.Decimal(14, 2)
+  date      DateTime
+  createdAt DateTime          @default(now())
+  account   InvestmentAccount @relation(fields: [accountId], references: [id], onDelete: Cascade)
+}
+
+enum Currency {
+  MUR
+  USD
+  EUR
+  GBP
+  ZAR
+}
+
+enum TransactionSource {
+  MANUAL
+  IMPORT
+  BILL
+  LOAN
+  INVESTMENT
+}
+
+enum BillFrequency {
+  ONCE
+  WEEKLY
+  MONTHLY
+  QUARTERLY
+  YEARLY
+}
+
+enum InvestmentTxType {
+  BUY
+  SELL
+  DIVIDEND
+  DEPOSIT
+  WITHDRAW
+}
