@@ -3,6 +3,15 @@ import type { NextRequest } from "next/server";
 
 export function proxy(request: NextRequest) {
   const response = NextResponse.next();
+  const csrfCookie = request.cookies.get("mft_csrf")?.value;
+  if (!csrfCookie) {
+    response.cookies.set("mft_csrf", crypto.randomUUID(), {
+      httpOnly: true,
+      sameSite: "lax",
+      path: "/",
+      secure: process.env.NODE_ENV === "production",
+    });
+  }
 
   response.headers.set("X-Content-Type-Options", "nosniff");
   response.headers.set("Referrer-Policy", "strict-origin-when-cross-origin");
