@@ -3,12 +3,15 @@ import { PrismaNeon } from "@prisma/adapter-neon";
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
+const rawDatabaseUrl = (process.env.DATABASE_URL || "").trim();
+const cleanedDatabaseUrl =
+  rawDatabaseUrl.replace(/^["']/, "").replace(/["']$/, "");
+
 const shouldUseNeon =
-  process.env.VERCEL === "1" ||
-  (process.env.DATABASE_URL || "").includes("neon.tech");
+  process.env.VERCEL === "1" || cleanedDatabaseUrl.includes("neon.tech");
 
 if (process.env.DEBUG_DB_URL === "1") {
-  const raw = process.env.DATABASE_URL || "";
+  const raw = cleanedDatabaseUrl;
   try {
     const url = new URL(raw);
     console.info("[db] url ok", {
@@ -29,11 +32,13 @@ if (process.env.DEBUG_DB_URL === "1") {
 const prismaOptions = shouldUseNeon
   ? {
       adapter: new PrismaNeon({
-        connectionString: process.env.DATABASE_URL || "",
+        connectionString: cleanedDatabaseUrl,
       }),
+      datasources: { db: { url: cleanedDatabaseUrl } },
       log: process.env.NODE_ENV === "development" ? ["warn", "error"] : ["error"],
     }
   : {
+      datasources: { db: { url: cleanedDatabaseUrl } },
       log: process.env.NODE_ENV === "development" ? ["warn", "error"] : ["error"],
     };
 
