@@ -4,26 +4,58 @@ import { PrismaNeon } from "@prisma/adapter-neon";
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
 const URL_KEYS = [
+  "POSTGRES_PRISMA_URL",
+  "POSTGRES_URL_NON_POOLING",
   "DATABASE_URL",
   "DIRECT_URL",
   "POSTGRES_URL",
-  "POSTGRES_PRISMA_URL",
-  "POSTGRES_URL_NON_POOLING",
 ] as const;
 
 function readFirstUrl() {
   for (const key of URL_KEYS) {
     const value = (process.env[key] || "").trim();
     if (!value) continue;
-    return {
-      key,
-      value: value.replace(/^["']/, "").replace(/["']$/, ""),
-    };
+    const cleaned = value.replace(/^["']+/, "").replace(/["']+$/, "");
+    return { key, value: cleaned };
   }
-  return { key: "DATABASE_URL", value: "" };
+  throw new Error(
+    `[db] Missing database URL. Set one of: ${URL_KEYS.join(", ")}`,
+  );
 }
 
 const { key: databaseUrlKey, value: cleanedDatabaseUrl } = readFirstUrl();
+
+// Temporary diagnostics for production env issues (do not log secrets).
+if (process.env.DEBUG_DB_URL === "1") {
+  const raw = (process.env[databaseUrlKey] || "").trim();
+  const hasQuotes = /^["']/.test(raw) || /["']$/.test(raw);
+  const hasWhitespace = /\s/.test(raw);
+  console.info("[db] env check", {
+    key: databaseUrlKey,
+    length: raw.length,
+    hasQuotes,
+    hasWhitespace,
+    startsWithPostgres: raw.startsWith("postgresql://") || raw.startsWith("postgres://"),
+  });
+  try {
+    // Validate URL format without printing the full secret.
+    new URL(raw.replace(/^["']+/, "").replace(/["']+$/, ""));
+    console.info("[db] url parse ok", { key: databaseUrlKey });
+  } catch (error) {
+    console.error("[db] url parse error", {
+      key: databaseUrlKey,
+      message: (error as Error).message,
+    });
+  }
+}
+
+try {
+  new URL(cleanedDatabaseUrl);
+} catch (error) {
+  throw new Error(
+    `[db] Invalid database URL in ${databaseUrlKey}: ${(error as Error).message}`,
+  );
+}
 
 const shouldUseNeon =
   process.env.VERCEL === "1" || cleanedDatabaseUrl.includes("neon.tech");
