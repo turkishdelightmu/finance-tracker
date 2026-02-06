@@ -5,10 +5,10 @@ const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
 const URL_KEYS = [
   "POSTGRES_PRISMA_URL",
-  "POSTGRES_URL_NON_POOLING",
+  "POSTGRES_URL",
   "DATABASE_URL",
   "DIRECT_URL",
-  "POSTGRES_URL",
+  "POSTGRES_URL_NON_POOLING",
 ] as const;
 
 function readFirstUrl() {
