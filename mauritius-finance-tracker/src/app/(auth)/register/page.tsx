@@ -66,7 +66,7 @@ export default function RegisterPage() {
         <button
           onClick={async () => {
             try {
-              window.location.href = '/api/auth/google';
+              window.location.href = '/api/auth/authorize/google';
             } catch (e) {
               // noop
             }
@@ -84,7 +84,7 @@ export default function RegisterPage() {
         <button
           onClick={async () => {
             try {
-              window.location.href = '/api/auth/github';
+              window.location.href = '/api/auth/authorize/github';
             } catch (e) {
               // noop
             }
