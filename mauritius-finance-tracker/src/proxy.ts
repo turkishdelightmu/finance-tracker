@@ -2,10 +2,17 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export function proxy(request: NextRequest) {
-  const response = NextResponse.next();
   const csrfCookie = request.cookies.get("mft_csrf")?.value;
+  const requestHeaders = new Headers(request.headers);
+  const csrfToken = csrfCookie ?? crypto.randomUUID();
+  requestHeaders.set("x-csrf-token", csrfToken);
+
+  const response = NextResponse.next({
+    request: { headers: requestHeaders },
+  });
+
   if (!csrfCookie) {
-    response.cookies.set("mft_csrf", crypto.randomUUID(), {
+    response.cookies.set("mft_csrf", csrfToken, {
       httpOnly: true,
       sameSite: "lax",
       path: "/",
