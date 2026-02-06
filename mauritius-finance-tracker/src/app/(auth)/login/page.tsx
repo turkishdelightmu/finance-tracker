@@ -79,21 +79,6 @@ export default function LoginPage() {
           </svg>
           <span className="text-sm font-medium">Continue with Google</span>
         </button>
-        <button
-          onClick={async () => {
-            try {
-              window.location.href = '/api/auth/authorize/github';
-            } catch (e) {
-              // noop
-            }
-          }}
-          className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-slate-900 text-white px-4 py-2 hover:opacity-95"
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-            <path d="M12 .5C5.73.5.85 5.38.85 11.64c0 4.7 3.04 8.68 7.26 10.09.53.1.72-.23.72-.51 0-.25-.01-.92-.01-1.8-2.95.64-3.58-1.42-3.58-1.42-.48-1.22-1.17-1.54-1.17-1.54-.96-.66.07-.65.07-.65 1.06.08 1.62 1.09 1.62 1.09.94 1.61 2.47 1.14 3.07.87.09-.67.37-1.14.67-1.4-2.36-.27-4.84-1.18-4.84-5.27 0-1.16.41-2.11 1.08-2.86-.11-.27-.47-1.36.1-2.84 0 0 .88-.28 2.88 1.08a10.03 10.03 0 0 1 2.62-.35c.89 0 1.78.12 2.62.35 2-.36 2.88-1.08 2.88-1.08.57 1.48.21 2.57.1 2.84.67.75 1.08 1.7 1.08 2.86 0 4.1-2.49 5-4.86 5.26.38.33.72.98.72 1.99 0 1.44-.01 2.6-.01 2.95 0 .28.19.61.73.51 4.23-1.41 7.27-5.39 7.27-10.09C23.15 5.38 18.27.5 12 .5z" />
-          </svg>
-          <span className="text-sm font-medium">Continue with GitHub</span>
-        </button>
         <div className="text-center text-sm text-slate-400">or</div>
       </div>
       <form onSubmit={handleSubmit} className="space-y-4">

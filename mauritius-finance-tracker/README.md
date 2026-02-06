@@ -20,6 +20,9 @@ Create `.env` with:
 DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/mauritius_finance"
 DIRECT_URL="postgresql://USER:PASSWORD@localhost:5432/mauritius_finance"
 CRON_SECRET="your-random-secret"
+BETTER_AUTH_SECRET="your-long-random-secret"
+GOOGLE_CLIENT_ID="optional"
+GOOGLE_CLIENT_SECRET="optional"
 ```
 `DIRECT_URL` should be a non-pooled connection string for migrations when using Neon.
 The app will automatically use the Neon adapter when `DATABASE_URL` contains `neon.tech`.
@@ -81,6 +84,7 @@ npm test
 - `DATABASE_URL` (Neon pooled URL or standard Postgres URL)
 - `DIRECT_URL` (non-pooled URL for migrations; required for Neon)
 - `CRON_SECRET` (random secret for `/api/cron/daily`)
+- `BETTER_AUTH_SECRET` (required for Better Auth)
 - `ENABLE_DEMO_USER` should be **unset** or `false` in production
 
 ### Vercel (primary path)

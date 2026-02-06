@@ -10,8 +10,8 @@ function providerFromPath(pathname: string) {
 	return null;
 }
 
-async function checkProviderConfig(provider: string | null) {
-	if (!provider) return true;
+async function checkProviderConfig(provider: string | null): Promise<{ ok: boolean; message?: string }> {
+	if (!provider) return { ok: true };
 	if (provider === "google") {
 		if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
 			return {

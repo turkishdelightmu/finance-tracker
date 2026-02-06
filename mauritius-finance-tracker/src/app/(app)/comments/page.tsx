@@ -13,11 +13,9 @@ async function create(formData: FormData) {
     redirect("/comments?notice=invalid");
   }
 
-  const sql = neon(`${process.env.DATABASE_URL}`);
-  await sql(
-    'INSERT INTO "Comment" ("id", "userId", "body", "createdAt") VALUES ($1, $2, $3, NOW())',
-    [randomUUID(), user.id, comment],
-  );
+  const sql = neon(process.env.DATABASE_URL || "");
+  await sql`INSERT INTO "Comment" ("id", "userId", "body", "createdAt")
+            VALUES (${randomUUID()}, ${user.id}, ${comment}, NOW())`;
 
   revalidatePath("/comments");
   redirect("/comments?notice=created");

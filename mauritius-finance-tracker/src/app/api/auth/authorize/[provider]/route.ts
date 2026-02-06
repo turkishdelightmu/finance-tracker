@@ -1,7 +1,11 @@
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
-export async function GET(request: Request, { params }: { params: { provider: string } }) {
-  const provider = params.provider;
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ provider: string }> }
+) {
+  const { provider } = await params;
   const url = new URL(request.url);
   const origin = url.origin;
 
@@ -43,7 +47,10 @@ export async function GET(request: Request, { params }: { params: { provider: st
   return new Response(text, { status, headers: { "Content-Type": resp.headers.get("Content-Type") || "text/plain" } });
 }
 
-export async function POST(request: Request, { params }: { params: { provider: string } }) {
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ provider: string }> }
+) {
   // Allow POST to behave the same as GET for clients that prefer POST.
   return GET(request, { params });
 }
