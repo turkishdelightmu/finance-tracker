@@ -3,9 +3,27 @@ import { PrismaNeon } from "@prisma/adapter-neon";
 
 const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
 
-const rawDatabaseUrl = (process.env.DATABASE_URL || "").trim();
-const cleanedDatabaseUrl =
-  rawDatabaseUrl.replace(/^["']/, "").replace(/["']$/, "");
+const URL_KEYS = [
+  "DATABASE_URL",
+  "DIRECT_URL",
+  "POSTGRES_URL",
+  "POSTGRES_PRISMA_URL",
+  "POSTGRES_URL_NON_POOLING",
+] as const;
+
+function readFirstUrl() {
+  for (const key of URL_KEYS) {
+    const value = (process.env[key] || "").trim();
+    if (!value) continue;
+    return {
+      key,
+      value: value.replace(/^["']/, "").replace(/["']$/, ""),
+    };
+  }
+  return { key: "DATABASE_URL", value: "" };
+}
+
+const { key: databaseUrlKey, value: cleanedDatabaseUrl } = readFirstUrl();
 
 const shouldUseNeon =
   process.env.VERCEL === "1" || cleanedDatabaseUrl.includes("neon.tech");
@@ -15,6 +33,7 @@ if (process.env.DEBUG_DB_URL === "1") {
   try {
     const url = new URL(raw);
     console.info("[db] url ok", {
+      key: databaseUrlKey,
       protocol: url.protocol,
       host: url.host,
       pathname: url.pathname,
@@ -22,6 +41,7 @@ if (process.env.DEBUG_DB_URL === "1") {
     });
   } catch (error) {
     console.error("[db] invalid DATABASE_URL", {
+      key: databaseUrlKey,
       length: raw.length,
       startsWithPostgres: raw.startsWith("postgresql://"),
     });
