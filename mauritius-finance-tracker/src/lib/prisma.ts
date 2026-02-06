@@ -54,11 +54,9 @@ const prismaOptions = shouldUseNeon
       adapter: new PrismaNeon({
         connectionString: cleanedDatabaseUrl,
       }),
-      datasources: { db: { url: cleanedDatabaseUrl } },
       log: process.env.NODE_ENV === "development" ? ["warn", "error"] : ["error"],
     }
   : {
-      datasources: { db: { url: cleanedDatabaseUrl } },
       log: process.env.NODE_ENV === "development" ? ["warn", "error"] : ["error"],
     };
 
