@@ -64,18 +64,7 @@ export default function LoginPage() {
         <button
           onClick={async () => {
             try {
-              const res = await fetch('/api/auth/sign-in/social', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ provider: 'google', disableRedirect: false }),
-              });
-              const loc = res.headers.get('Location');
-              if (loc) {
-                window.location.href = loc;
-                return;
-              }
-              const data = await res.json().catch(() => ({}));
-              if (data.url) window.location.href = data.url;
+              window.location.href = '/api/auth/google';
             } catch (e) {
               // noop
             }
@@ -93,18 +82,7 @@ export default function LoginPage() {
         <button
           onClick={async () => {
             try {
-              const res = await fetch('/api/auth/sign-in/social', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ provider: 'github', disableRedirect: false }),
-              });
-              const loc = res.headers.get('Location');
-              if (loc) {
-                window.location.href = loc;
-                return;
-              }
-              const data = await res.json().catch(() => ({}));
-              if (data.url) window.location.href = data.url;
+              window.location.href = '/api/auth/github';
             } catch (e) {
               // noop
             }
