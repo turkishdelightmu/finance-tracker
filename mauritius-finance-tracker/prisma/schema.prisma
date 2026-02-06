@@ -4,6 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -23,6 +24,7 @@ model User {
   loanPayments    LoanPayment[]
   notifications   Notification[]
   auditEvents     AuditEvent[]
+  comments        Comment[]
   sessions        Session[]
   transactions    Transaction[]
 }
@@ -133,6 +135,16 @@ model AuditEvent {
   userId    String
   action    String
   metadata  Json?
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  userId    String
+  body      String
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
