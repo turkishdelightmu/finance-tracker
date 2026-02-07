@@ -128,7 +128,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-400 py-2 font-semibold text-white"
+          className="w-full rounded-xl bg-gradient-to-r from-emerald-500 to-green-400 py-2 font-semibold text-white"
         >
           {loading ? "Signing in..." : "Sign in"}
         </button>

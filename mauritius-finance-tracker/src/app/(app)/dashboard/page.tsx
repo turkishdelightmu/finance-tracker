@@ -84,7 +84,7 @@ export default async function DashboardPage() {
   return (
     <div className="space-y-6 pb-20">
       <section className="glass rounded-3xl p-6">
-        <p className="text-sm uppercase tracking-[0.3em] text-cyan-200/80">This month</p>
+        <p className="text-sm uppercase tracking-[0.3em] text-emerald-200/80">This month</p>
         <h2 className="text-2xl font-semibold text-white">
           {now.toFormat("MMMM yyyy")}
         </h2>
@@ -116,7 +116,7 @@ export default async function DashboardPage() {
                     {formatDate(tx.date)} · {tx.category?.name || "Uncategorized"}
                   </p>
                 </div>
-                <span className="text-sm font-semibold text-cyan-200">
+                <span className="text-sm font-semibold text-emerald-200">
                   {formatCurrency(Number(tx.amount), tx.currency)}
                 </span>
               </div>
@@ -137,7 +137,7 @@ export default async function DashboardPage() {
                     Next due {formatDate(bill.nextDueDate)}
                   </p>
                 </div>
-                <span className="text-sm font-semibold text-cyan-200">
+                <span className="text-sm font-semibold text-emerald-200">
                   {formatCurrency(Number(bill.expectedAmount))}
                 </span>
               </div>
@@ -149,17 +149,17 @@ export default async function DashboardPage() {
       <section className="grid gap-4 md:grid-cols-3">
         <div className="glass rounded-3xl p-5">
           <h3 className="text-lg font-semibold text-white">Goals</h3>
-          <p className="text-3xl font-semibold mt-2 text-cyan-200">{goals.length}</p>
+          <p className="text-3xl font-semibold mt-2 text-emerald-200">{goals.length}</p>
           <p className="text-sm text-slate-300">Active savings goals</p>
         </div>
         <div className="glass rounded-3xl p-5">
           <h3 className="text-lg font-semibold text-white">Loans</h3>
-          <p className="text-3xl font-semibold mt-2 text-cyan-200">{loans.length}</p>
+          <p className="text-3xl font-semibold mt-2 text-emerald-200">{loans.length}</p>
           <p className="text-sm text-slate-300">Tracked loans</p>
         </div>
         <div className="glass rounded-3xl p-5">
           <h3 className="text-lg font-semibold text-white">Investments</h3>
-          <p className="text-3xl font-semibold mt-2 text-cyan-200">{formatCurrency(portfolioValue)}</p>
+          <p className="text-3xl font-semibold mt-2 text-emerald-200">{formatCurrency(portfolioValue)}</p>
           <p className="text-sm text-slate-300">Estimated portfolio value</p>
         </div>
       </section>
