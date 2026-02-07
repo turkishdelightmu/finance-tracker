@@ -2,17 +2,24 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "@/lib/prisma";
 
-const vercelUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
+function cleanEnv(value: string | undefined | null): string {
+  return (value || "").replace(/[\r\n]/g, "").trim();
+}
+
+const vercelHost = cleanEnv(process.env.VERCEL_URL);
+const vercelUrl = vercelHost
+  ? `https://${vercelHost}`
   : null;
 const appBaseUrl =
-  process.env.BETTER_AUTH_URL ||
-  process.env.NEXT_PUBLIC_APP_URL ||
+  cleanEnv(process.env.BETTER_AUTH_URL) ||
+  cleanEnv(process.env.NEXT_PUBLIC_APP_URL) ||
   vercelUrl ||
   "http://localhost:3000";
+const googleClientId = cleanEnv(process.env.GOOGLE_CLIENT_ID);
+const googleClientSecret = cleanEnv(process.env.GOOGLE_CLIENT_SECRET);
 
 export const auth = betterAuth({
-  secret: process.env.BETTER_AUTH_SECRET,
+  secret: cleanEnv(process.env.BETTER_AUTH_SECRET),
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
@@ -22,8 +29,8 @@ export const auth = betterAuth({
   },
   socialProviders: {
     google: {
-      clientId: process.env.GOOGLE_CLIENT_ID || "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+      clientId: googleClientId,
+      clientSecret: googleClientSecret,
     },
   },
   trustedOrigins: [
