@@ -138,38 +138,38 @@ export default async function TransactionsPage({
         </div>
       )}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold">Transactions</h2>
+        <h2 className="text-2xl font-semibold text-white">Transactions</h2>
         <Link
           href="/transactions/import"
-          className="text-sm font-medium text-slate-900"
+          className="inline-flex items-center rounded-xl bg-emerald-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-emerald-500"
         >
           Import CSV
         </Link>
       </div>
 
-      <section className="rounded-3xl bg-white/90 border border-slate-200 p-5">
+      <section className="glass rounded-3xl p-5">
         <h3 className="text-lg font-semibold">Add transaction</h3>
         <form action={createTransactionAction} className="mt-4 grid gap-3 md:grid-cols-2">
           <div className="space-y-1">
-            <input name="date" placeholder="Date (dd/mm/yyyy)" className="w-full rounded-xl border border-slate-200 px-3 py-2" required />
-            <p className="text-xs text-slate-500">Example: 05/02/2026</p>
+            <input name="date" placeholder="Date (dd/mm/yyyy)" className="w-full rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100" required />
+            <p className="text-xs text-slate-300">Example: 05/02/2026</p>
           </div>
-          <input name="description" placeholder="Description" className="rounded-xl border border-slate-200 px-3 py-2" required />
-          <input name="merchant" placeholder="Merchant" className="rounded-xl border border-slate-200 px-3 py-2" />
+          <input name="description" placeholder="Description" className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100" required />
+          <input name="merchant" placeholder="Merchant" className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100" />
           <div className="space-y-1">
-            <input name="amount" placeholder="Amount (MUR)" className="w-full rounded-xl border border-slate-200 px-3 py-2" required />
-            <p className="text-xs text-slate-500">Use a minus sign for refunds.</p>
+            <input name="amount" placeholder="Amount (MUR)" className="w-full rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100" required />
+            <p className="text-xs text-slate-300">Use a minus sign for refunds.</p>
           </div>
-          <input name="account" placeholder="Account" className="rounded-xl border border-slate-200 px-3 py-2" />
-          <input name="paymentMethod" placeholder="Payment method" className="rounded-xl border border-slate-200 px-3 py-2" />
-          <select name="currency" className="rounded-xl border border-slate-200 px-3 py-2">
+          <input name="account" placeholder="Account" className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100" />
+          <input name="paymentMethod" placeholder="Payment method" className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100" />
+          <select name="currency" className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100">
             <option value="MUR">MUR</option>
             <option value="USD">USD</option>
             <option value="EUR">EUR</option>
             <option value="GBP">GBP</option>
             <option value="ZAR">ZAR</option>
           </select>
-          <select name="categoryId" className="rounded-xl border border-slate-200 px-3 py-2">
+          <select name="categoryId" className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100">
             <option value="">Auto-categorize</option>
             {categories.map((cat: CategoryRow) => (
               <option key={cat.id} value={cat.id}>{cat.name}</option>
@@ -181,7 +181,7 @@ export default async function TransactionsPage({
         </form>
       </section>
 
-      <section className="rounded-3xl bg-white/90 border border-slate-200 p-5">
+      <section className="glass rounded-3xl p-5">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
           <h3 className="text-lg font-semibold">Monthly totals</h3>
           <form className="flex gap-2" method="get">
@@ -189,46 +189,46 @@ export default async function TransactionsPage({
               type="month"
               name="month"
               defaultValue={month.toFormat("yyyy-MM")}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100 text-sm"
             />
             <select
               name="category"
               defaultValue={categoryFilter}
-              className="rounded-xl border border-slate-200 px-3 py-2 text-sm"
+              className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100 text-sm"
             >
               <option value="">All categories</option>
               {categories.map((cat: CategoryRow) => (
                 <option key={cat.id} value={cat.id}>{cat.name}</option>
               ))}
             </select>
-            <button className="rounded-xl bg-slate-900 text-white px-3 py-2 text-sm">Filter</button>
+            <button className="rounded-xl bg-emerald-600 text-white px-3 py-2 text-sm">Filter</button>
           </form>
         </div>
         <div className="mt-4 space-y-2">
           {totalsByCategory.length === 0 && (
-            <p className="text-sm text-slate-500">No transactions for this month.</p>
+            <p className="text-sm text-slate-300">No transactions for this month.</p>
           )}
           {totalsByCategory.map((item: { category: string; amount: number }) => (
             <div key={item.category} className="flex justify-between">
-              <span className="text-sm text-slate-600">{item.category}</span>
-              <span className="font-medium">{formatCurrency(item.amount)}</span>
+              <span className="text-sm text-slate-300">{item.category}</span>
+              <span className="font-medium text-white">{formatCurrency(item.amount)}</span>
             </div>
           ))}
         </div>
       </section>
 
-      <section className="rounded-3xl bg-white/90 border border-slate-200 p-5">
+      <section className="glass rounded-3xl p-5">
         <h3 className="text-lg font-semibold">All transactions</h3>
         <div className="mt-4 space-y-3">
           {transactions.length === 0 && (
-            <p className="text-sm text-slate-500">No transactions found.</p>
+            <p className="text-sm text-slate-300">No transactions found.</p>
           )}
           {transactions.map((tx: TransactionRow) => (
-            <div key={tx.id} className="border border-slate-200 rounded-2xl p-4">
+            <div key={tx.id} className="rounded-2xl border border-white/10 bg-black/10 p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium">{tx.description}</p>
-                  <p className="text-xs text-slate-500">
+                  <p className="font-medium text-white">{tx.description}</p>
+                  <p className="text-xs text-slate-300">
                     {formatDate(tx.date)} · {tx.merchant || "No merchant"}
                   </p>
                 </div>
@@ -237,13 +237,13 @@ export default async function TransactionsPage({
               <div className="mt-3 grid gap-2 md:grid-cols-3">
                 <form action={updateTransactionAction} className="flex flex-col gap-2">
                   <input type="hidden" name="id" value={tx.id} />
-                  <select name="categoryId" defaultValue={tx.categoryId || ""} className="rounded-xl border border-slate-200 px-3 py-2 text-sm">
+                  <select name="categoryId" defaultValue={tx.categoryId || ""} className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100 text-sm">
                     <option value="">Uncategorized</option>
                     {categories.map((cat: CategoryRow) => (
                       <option key={cat.id} value={cat.id}>{cat.name}</option>
                     ))}
                   </select>
-                  <div className="flex items-center gap-2 text-xs text-slate-500">
+                  <div className="flex items-center gap-2 text-xs text-slate-300">
                     <input type="checkbox" name="saveRule" value="yes" />
                     <span>Save rule for this merchant/keyword?</span>
                   </div>
@@ -251,14 +251,14 @@ export default async function TransactionsPage({
                     Update category
                   </SubmitButton>
                 </form>
-                <div className="text-xs text-slate-500">
+                <div className="text-xs text-slate-300">
                   <p>Account: {tx.account || "-"}</p>
                   <p>Payment: {tx.paymentMethod || "-"}</p>
                   <p>Category: {tx.category?.name || "Uncategorized"}</p>
                 </div>
                 <form action={deleteTransactionAction} className="md:text-right">
                   <input type="hidden" name="id" value={tx.id} />
-                  <button className="text-sm font-medium text-rose-600">Delete</button>
+                  <button className="text-sm font-medium text-rose-300">Delete</button>
                 </form>
               </div>
             </div>

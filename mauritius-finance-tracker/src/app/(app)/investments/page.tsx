@@ -120,13 +120,13 @@ export default async function InvestmentsPage({
           {notice === "invalid" && "Please check the form inputs."}
         </div>
       )}
-      <h2 className="text-2xl font-semibold">Investments</h2>
+      <h2 className="text-2xl font-semibold text-white">Investments</h2>
 
-      <section className="rounded-3xl bg-white/90 border border-slate-200 p-5">
+      <section className="glass rounded-3xl p-5">
         <h3 className="text-lg font-semibold">Add investment account</h3>
         <form action={createAccountAction} className="mt-4 grid gap-3 md:grid-cols-2">
-          <input name="name" placeholder="Account name" className="rounded-xl border border-slate-200 px-3 py-2" required />
-          <input name="institution" placeholder="Institution" className="rounded-xl border border-slate-200 px-3 py-2" />
+          <input name="name" placeholder="Account name" className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100" required />
+          <input name="institution" placeholder="Institution" className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100" />
           <SubmitButton className="md:col-span-2" pendingText="Saving...">
             Save account
           </SubmitButton>
@@ -134,7 +134,7 @@ export default async function InvestmentsPage({
       </section>
 
       {accounts.length === 0 && (
-        <div className="rounded-3xl bg-white/90 border border-slate-200 p-5 text-sm text-slate-500">
+        <div className="glass rounded-3xl p-5 text-sm text-slate-300">
           No investment accounts yet. Add one to start tracking holdings.
         </div>
       )}
@@ -146,11 +146,11 @@ export default async function InvestmentsPage({
           0,
         );
         return (
-          <section key={account.id} className="rounded-3xl bg-white/90 border border-slate-200 p-5 space-y-4">
+          <section key={account.id} className="glass rounded-3xl p-5 space-y-4">
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-lg font-semibold">{account.name}</h3>
-                <p className="text-sm text-slate-500">{account.institution || ""}</p>
+                <p className="text-sm text-slate-300">{account.institution || ""}</p>
               </div>
               <p className="font-semibold">{formatCurrency(portfolioValue)}</p>
             </div>
@@ -159,7 +159,7 @@ export default async function InvestmentsPage({
               <h4 className="text-sm font-semibold">Holdings</h4>
               <div className="mt-2 space-y-2">
                 {account.holdings.length === 0 && (
-                  <p className="text-sm text-slate-500">No holdings yet.</p>
+                  <p className="text-sm text-slate-300">No holdings yet.</p>
                 )}
                 {account.holdings.map((holding: HoldingRow) => {
                   const value = Number(holding.quantity) * Number(holding.price);
@@ -170,23 +170,23 @@ export default async function InvestmentsPage({
                     : 0;
 
                   return (
-                    <div key={holding.id} className="border border-slate-200 rounded-xl p-3">
+                    <div key={holding.id} className="rounded-xl border border-white/10 bg-black/10 p-3">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="font-medium">{holding.symbol}</p>
-                          <p className="text-xs text-slate-500">{holding.name}</p>
+                          <p className="font-medium text-white">{holding.symbol}</p>
+                          <p className="text-xs text-slate-300">{holding.name}</p>
                         </div>
                         <p className="text-sm font-semibold">
                           {formatCurrency(value)}
                         </p>
                       </div>
-                      <div className="mt-2 text-xs text-slate-500 flex items-center justify-between">
+                      <div className="mt-2 text-xs text-slate-300 flex items-center justify-between">
                         <span>Allocation {allocation}%</span>
                         <span>Unrealized P/L {formatCurrency(pnl)}</span>
                       </div>
                       <form action={updateHoldingPriceAction} className="mt-2 flex gap-2">
                         <input type="hidden" name="holdingId" value={holding.id} />
-                        <input name="price" placeholder="Update price" className="flex-1 rounded-xl border border-slate-200 px-3 py-2 text-xs" />
+                        <input name="price" placeholder="Update price" className="flex-1 rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100 text-xs" />
                         <SubmitButton className="px-3 py-2 text-xs" pendingText="Updating...">
                           Update
                         </SubmitButton>
@@ -201,10 +201,10 @@ export default async function InvestmentsPage({
               <h4 className="text-sm font-semibold">Add holding</h4>
               <form action={addHoldingAction} className="mt-2 grid gap-2 md:grid-cols-4">
                 <input type="hidden" name="accountId" value={account.id} />
-                <input name="symbol" placeholder="Symbol" className="rounded-xl border border-slate-200 px-3 py-2 text-sm" required />
-                <input name="name" placeholder="Name" className="rounded-xl border border-slate-200 px-3 py-2 text-sm" required />
-                <input name="quantity" placeholder="Quantity (e.g. 10)" className="rounded-xl border border-slate-200 px-3 py-2 text-sm" required />
-                <input name="price" placeholder="Price (MUR)" className="rounded-xl border border-slate-200 px-3 py-2 text-sm" required />
+                <input name="symbol" placeholder="Symbol" className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100 text-sm" required />
+                <input name="name" placeholder="Name" className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100 text-sm" required />
+                <input name="quantity" placeholder="Quantity (e.g. 10)" className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100 text-sm" required />
+                <input name="price" placeholder="Price (MUR)" className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100 text-sm" required />
                 <SubmitButton className="md:col-span-4 py-2 text-sm" pendingText="Saving...">
                   Save holding
                 </SubmitButton>
@@ -215,18 +215,18 @@ export default async function InvestmentsPage({
               <h4 className="text-sm font-semibold">Investment transactions</h4>
               <form action={addTransactionAction} className="mt-2 grid gap-2 md:grid-cols-3">
                 <input type="hidden" name="accountId" value={account.id} />
-                <select name="type" className="rounded-xl border border-slate-200 px-3 py-2 text-sm">
+                <select name="type" className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100 text-sm">
                   <option value="BUY">Buy</option>
                   <option value="SELL">Sell</option>
                   <option value="DIVIDEND">Dividend</option>
                   <option value="DEPOSIT">Deposit</option>
                   <option value="WITHDRAW">Withdraw</option>
                 </select>
-                <input name="symbol" placeholder="Symbol" className="rounded-xl border border-slate-200 px-3 py-2 text-sm" />
-                <input name="quantity" placeholder="Quantity (optional)" className="rounded-xl border border-slate-200 px-3 py-2 text-sm" />
-                <input name="price" placeholder="Price (optional)" className="rounded-xl border border-slate-200 px-3 py-2 text-sm" />
-                <input name="amount" placeholder="Amount (MUR)" className="rounded-xl border border-slate-200 px-3 py-2 text-sm" required />
-                <input name="date" type="date" className="rounded-xl border border-slate-200 px-3 py-2 text-sm" required />
+                <input name="symbol" placeholder="Symbol" className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100 text-sm" />
+                <input name="quantity" placeholder="Quantity (optional)" className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100 text-sm" />
+                <input name="price" placeholder="Price (optional)" className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100 text-sm" />
+                <input name="amount" placeholder="Amount (MUR)" className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100 text-sm" required />
+                <input name="date" type="date" className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100 text-sm" required />
                 <SubmitButton className="md:col-span-3 py-2 text-sm" pendingText="Saving...">
                   Add transaction
                 </SubmitButton>

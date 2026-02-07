@@ -14,6 +14,8 @@ const fields = [
   "category",
 ];
 
+type ImportIssue = { row: number; message: string };
+
 export default function ImportPage() {
   const [columns, setColumns] = useState<string[]>([]);
   const [rows, setRows] = useState<Record<string, string>[]>([]);
@@ -61,7 +63,7 @@ export default function ImportPage() {
       setStatus("Import failed.");
       if (data.errors) {
         setImportErrors(
-          data.errors.slice(0, 5).map((err: any) => `Row ${err.row}: ${err.message}`),
+          (data.errors as ImportIssue[]).slice(0, 5).map((err) => `Row ${err.row}: ${err.message}`),
         );
       }
       return;
@@ -69,7 +71,7 @@ export default function ImportPage() {
     if (dryRun) {
       if (data.errors && data.errors.length > 0) {
         setImportErrors(
-          data.errors.slice(0, 5).map((err: any) => `Row ${err.row}: ${err.message}`),
+          (data.errors as ImportIssue[]).slice(0, 5).map((err) => `Row ${err.row}: ${err.message}`),
         );
         setStatus("Dry run completed with issues.");
       } else {
@@ -83,8 +85,8 @@ export default function ImportPage() {
   return (
     <div className="space-y-6 pb-20">
       <div>
-        <h2 className="text-2xl font-semibold">Import CSV</h2>
-        <p className="text-sm text-slate-500">
+        <h2 className="text-2xl font-semibold text-white">Import CSV</h2>
+        <p className="text-sm text-slate-300">
           Upload your CSV and map the columns to our fields.
         </p>
       </div>
@@ -99,9 +101,9 @@ export default function ImportPage() {
       />
 
       {columns.length > 0 && (
-        <section className="rounded-3xl bg-white/90 border border-slate-200 p-5 space-y-3">
+        <section className="glass rounded-3xl p-5 space-y-3">
           <h3 className="text-lg font-semibold">Column mapping</h3>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-slate-300">
             {rows.length} rows detected. Only the first 20 are shown in preview.
           </p>
           <div className="grid gap-3 md:grid-cols-2">
@@ -109,7 +111,7 @@ export default function ImportPage() {
               <label key={field} className="text-sm">
                 {field}
                 <select
-                  className="mt-2 w-full rounded-xl border border-slate-200 px-3 py-2"
+                  className="mt-2 w-full rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100"
                   value={mapping[field] || ""}
                   onChange={(event) =>
                     setMapping((prev) => ({ ...prev, [field]: event.target.value }))
@@ -127,11 +129,11 @@ export default function ImportPage() {
           </div>
           <button
             onClick={handleImport}
-            className="rounded-xl bg-slate-900 text-white px-4 py-2 text-sm"
+            className="rounded-xl bg-emerald-600 text-white px-4 py-2 text-sm"
           >
             {dryRun ? "Run dry import" : "Import rows"}
           </button>
-          <label className="flex items-center gap-2 text-xs text-slate-500">
+          <label className="flex items-center gap-2 text-xs text-slate-300">
             <input
               type="checkbox"
               checked={dryRun}
@@ -139,20 +141,20 @@ export default function ImportPage() {
             />
             Dry run (validate only)
           </label>
-          {errors && <p className="text-sm text-rose-600">{errors}</p>}
+          {errors && <p className="text-sm text-rose-300">{errors}</p>}
           {importErrors.length > 0 && (
-            <div className="text-xs text-rose-600 space-y-1">
+            <div className="text-xs text-rose-300 space-y-1">
               {importErrors.map((line) => (
                 <div key={line}>{line}</div>
               ))}
             </div>
           )}
-          {status && <p className="text-sm text-slate-500">{status}</p>}
+          {status && <p className="text-sm text-slate-300">{status}</p>}
         </section>
       )}
 
       {previewRows.length > 0 && (
-        <section className="rounded-3xl bg-white/90 border border-slate-200 p-5">
+        <section className="glass rounded-3xl p-5">
           <h3 className="text-lg font-semibold">Preview</h3>
           <div className="mt-3 space-y-2">
             {previewRows.map((row, index) => (

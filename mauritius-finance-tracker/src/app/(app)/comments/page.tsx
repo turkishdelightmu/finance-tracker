@@ -26,7 +26,7 @@ export default async function CommentsPage({
 }: {
   searchParams?: { notice?: string };
 }) {
-  const user = await requireUser();
+  await requireUser();
   const notice = searchParams?.notice;
   return (
     <div className="space-y-6 pb-20">
@@ -42,15 +42,15 @@ export default async function CommentsPage({
           {notice === "invalid" && "Please enter a comment under 500 characters."}
         </div>
       )}
-      <h2 className="text-2xl font-semibold">Comments</h2>
+      <h2 className="text-2xl font-semibold text-white">Comments</h2>
 
-      <section className="rounded-3xl bg-white/90 border border-slate-200 p-5">
+      <section className="glass rounded-3xl p-5">
         <h3 className="text-lg font-semibold">Add comment</h3>
         <form action={create} className="mt-4 grid gap-3">
           <textarea
             name="comment"
             placeholder="Write a comment..."
-            className="min-h-[120px] rounded-xl border border-slate-200 px-3 py-2"
+            className="min-h-[120px] rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100"
             maxLength={500}
             required
           />

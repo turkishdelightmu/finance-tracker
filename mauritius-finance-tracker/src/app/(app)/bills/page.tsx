@@ -85,24 +85,24 @@ export default async function BillsPage({
           {notice === "invalid" && "Please check the form inputs."}
         </div>
       )}
-      <h2 className="text-2xl font-semibold">Bills</h2>
-      <section className="rounded-3xl bg-white/90 border border-slate-200 p-5">
+      <h2 className="text-2xl font-semibold text-white">Bills</h2>
+      <section className="glass rounded-3xl p-5">
         <h3 className="text-lg font-semibold">Add bill</h3>
         <form action={createBillAction} className="mt-4 grid gap-3 md:grid-cols-2">
-          <input name="name" placeholder="Bill name" className="rounded-xl border border-slate-200 px-3 py-2" required />
-          <input name="expectedAmount" placeholder="Expected amount" className="rounded-xl border border-slate-200 px-3 py-2" required />
-          <select name="frequency" className="rounded-xl border border-slate-200 px-3 py-2">
+          <input name="name" placeholder="Bill name" className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100" required />
+          <input name="expectedAmount" placeholder="Expected amount" className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100" required />
+          <select name="frequency" className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100">
             <option value="MONTHLY">Monthly</option>
             <option value="WEEKLY">Weekly</option>
             <option value="ONCE">Once</option>
             <option value="QUARTERLY">Quarterly</option>
             <option value="YEARLY">Yearly</option>
           </select>
-          <input name="dueDay" placeholder="Due day (1-31, optional)" className="rounded-xl border border-slate-200 px-3 py-2" />
-          <input name="dueDate" placeholder="Due date (dd/mm/yyyy)" className="rounded-xl border border-slate-200 px-3 py-2" />
+          <input name="dueDay" placeholder="Due day (1-31, optional)" className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100" />
+          <input name="dueDate" placeholder="Due date (dd/mm/yyyy)" className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100" />
           <div className="space-y-1">
-            <input name="nextDueDate" placeholder="Next due date (dd/mm/yyyy)" className="w-full rounded-xl border border-slate-200 px-3 py-2" required />
-            <p className="text-xs text-slate-500">Bills will trigger reminders at 08:00 Mauritius time.</p>
+            <input name="nextDueDate" placeholder="Next due date (dd/mm/yyyy)" className="w-full rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100" required />
+            <p className="text-xs text-slate-300">Bills will trigger reminders at 08:00 Mauritius time.</p>
           </div>
           <SubmitButton className="md:col-span-2" pendingText="Saving...">
             Save bill
@@ -110,18 +110,18 @@ export default async function BillsPage({
         </form>
       </section>
 
-      <section className="rounded-3xl bg-white/90 border border-slate-200 p-5">
+      <section className="glass rounded-3xl p-5">
         <h3 className="text-lg font-semibold">Your bills</h3>
         <div className="mt-4 space-y-3">
           {bills.length === 0 && (
-            <p className="text-sm text-slate-500">No bills yet.</p>
+            <p className="text-sm text-slate-300">No bills yet.</p>
           )}
           {bills.map((bill: BillRow) => (
-            <div key={bill.id} className="border border-slate-200 rounded-2xl p-4">
+            <div key={bill.id} className="rounded-2xl border border-white/10 bg-black/10 p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-medium">{bill.name}</p>
-                  <p className="text-xs text-slate-500">
+                  <p className="font-medium text-white">{bill.name}</p>
+                  <p className="text-xs text-slate-300">
                     Next due {formatDate(bill.nextDueDate)} · {bill.frequency}
                   </p>
                 </div>
@@ -130,7 +130,7 @@ export default async function BillsPage({
               <div className="mt-3 grid gap-2 md:grid-cols-3">
                 <form action={markPaidAction} className="flex flex-col gap-2">
                   <input type="hidden" name="id" value={bill.id} />
-                  <div className="flex items-center gap-2 text-xs text-slate-500">
+                  <div className="flex items-center gap-2 text-xs text-slate-300">
                     <input type="checkbox" name="createTx" value="yes" />
                     <span>Create linked transaction</span>
                   </div>
@@ -140,7 +140,7 @@ export default async function BillsPage({
                 </form>
                 <form action={toggleBillAction} className="md:text-right">
                   <input type="hidden" name="id" value={bill.id} />
-                  <button className="text-sm font-medium text-slate-600">
+                  <button className="text-sm font-medium text-slate-300">
                     {bill.active ? "Deactivate" : "Activate"}
                   </button>
                 </form>

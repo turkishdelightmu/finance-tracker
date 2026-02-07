@@ -76,25 +76,25 @@ export default async function GoalsPage({
           {notice === "invalid" && "Please check the form inputs."}
         </div>
       )}
-      <h2 className="text-2xl font-semibold">Savings goals</h2>
-      <section className="rounded-3xl bg-white/90 border border-slate-200 p-5">
+      <h2 className="text-2xl font-semibold text-white">Savings goals</h2>
+      <section className="glass rounded-3xl p-5">
         <h3 className="text-lg font-semibold">Add goal</h3>
         <form action={createGoalAction} className="mt-4 grid gap-3 md:grid-cols-2">
-          <input name="name" placeholder="Goal name" className="rounded-xl border border-slate-200 px-3 py-2" required />
-          <input name="targetAmount" placeholder="Target amount" className="rounded-xl border border-slate-200 px-3 py-2" required />
-          <input name="targetDate" type="date" className="rounded-xl border border-slate-200 px-3 py-2" required />
-          <input name="currentAmount" placeholder="Current amount" className="rounded-xl border border-slate-200 px-3 py-2" />
+          <input name="name" placeholder="Goal name" className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100" required />
+          <input name="targetAmount" placeholder="Target amount" className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100" required />
+          <input name="targetDate" type="date" className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100" required />
+          <input name="currentAmount" placeholder="Current amount" className="rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100" />
           <SubmitButton className="md:col-span-2" pendingText="Saving...">
             Save goal
           </SubmitButton>
         </form>
       </section>
 
-      <section className="rounded-3xl bg-white/90 border border-slate-200 p-5">
+      <section className="glass rounded-3xl p-5">
         <h3 className="text-lg font-semibold">Your goals</h3>
         <div className="mt-4 space-y-3">
           {goals.length === 0 && (
-            <p className="text-sm text-slate-500">No goals yet.</p>
+            <p className="text-sm text-slate-300">No goals yet.</p>
           )}
           {goals.map((goal: GoalRow) => {
             const target = Number(goal.targetAmount);
@@ -111,23 +111,23 @@ export default async function GoalsPage({
             const monthlyRequired = remaining / monthsLeft;
 
             return (
-              <div key={goal.id} className="border border-slate-200 rounded-2xl p-4">
+              <div key={goal.id} className="rounded-2xl border border-white/10 bg-black/10 p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium">{goal.name}</p>
-                    <p className="text-xs text-slate-500">
+                    <p className="font-medium text-white">{goal.name}</p>
+                    <p className="text-xs text-slate-300">
                       Target {formatCurrency(target)} by {formatDate(goal.targetDate)}
                     </p>
                   </div>
                   <p className="font-semibold">{formatCurrency(current)}</p>
                 </div>
-                <div className="mt-3 text-xs text-slate-500">
+                <div className="mt-3 text-xs text-slate-300">
                   Required monthly saving: {formatCurrency(monthlyRequired)}
                 </div>
                 <form action={addContributionAction} className="mt-3 flex gap-2">
                   <input type="hidden" name="goalId" value={goal.id} />
-                  <input name="amount" placeholder="Contribution (MUR)" className="flex-1 rounded-xl border border-slate-200 px-3 py-2 text-sm" />
-                  <input name="transactionId" placeholder="Transaction ID (optional)" className="flex-1 rounded-xl border border-slate-200 px-3 py-2 text-sm" />
+                  <input name="amount" placeholder="Contribution (MUR)" className="flex-1 rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100 text-sm" />
+                  <input name="transactionId" placeholder="Transaction ID (optional)" className="flex-1 rounded-xl border border-white/20 bg-slate-900/40 px-3 py-2 text-slate-100 text-sm" />
                   <SubmitButton className="px-3 py-2 text-sm" pendingText="Saving...">
                     Add
                   </SubmitButton>
