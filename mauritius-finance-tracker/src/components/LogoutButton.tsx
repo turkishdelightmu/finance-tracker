@@ -20,7 +20,7 @@ export default function LogoutButton() {
     <button
       type="button"
       onClick={handleLogout}
-      className="text-sm font-medium text-slate-600 hover:text-slate-900"
+      className="rounded-xl border border-white/20 bg-white/5 px-3 py-2 text-sm font-medium text-slate-100 transition hover:bg-white/10"
     >
       Log out
     </button>

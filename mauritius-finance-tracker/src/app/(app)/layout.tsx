@@ -17,29 +17,35 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
   const user = await requireUser();
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="px-4 py-4 flex items-center justify-between bg-white/70 backdrop-blur border-b border-slate-200">
-        <div>
-          <p className="text-xs uppercase tracking-[0.3em] text-slate-400">Mauritius</p>
-          <h1 className="text-lg font-semibold">Finance Tracker</h1>
-          <p className="text-sm text-slate-500">Hello {user.name || user.email}</p>
-        </div>
-        <LogoutButton />
-      </header>
+    <div className="min-h-screen pb-24 md:pb-0">
+      <div className="mx-auto max-w-6xl px-4 py-5 md:py-8">
+        <header className="glass rounded-3xl px-5 py-5 md:px-6 md:py-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-xs uppercase tracking-[0.35em] text-cyan-200/80">Mauritius</p>
+              <h1 className="mt-1 text-xl font-semibold text-white md:text-2xl">Finance Tracker</h1>
+              <p className="mt-1 text-sm text-slate-300">Hello {user.name || user.email}</p>
+            </div>
+            <LogoutButton />
+          </div>
+        </header>
 
-      <main className="flex-1 px-4 py-6 max-w-5xl w-full mx-auto">{children}</main>
+        <main className="mt-5">{children}</main>
+      </div>
 
-      <nav className="fixed bottom-0 left-0 right-0 bg-white/90 border-t border-slate-200 md:static md:border-t-0 md:border-b md:bg-transparent">
-        <div className="max-w-5xl mx-auto flex justify-between md:justify-start gap-4 px-4 py-3">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="text-xs md:text-sm font-medium text-slate-600 hover:text-slate-900"
-            >
-              {item.label}
-            </Link>
-          ))}
+      <nav className="fixed bottom-4 left-4 right-4 z-30 md:left-1/2 md:right-auto md:w-max md:-translate-x-1/2">
+        <div className="glass rounded-2xl px-3 py-2">
+          <div className="flex items-center justify-between gap-1 md:gap-2">
+            {navItems.map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="rounded-xl px-3 py-2 text-xs font-medium text-slate-200 transition hover:bg-white/10 hover:text-white md:text-sm"
+              >
+                {item.label}
+              </Link>
+            ))}
+          </div>
         </div>
       </nav>
     </div>

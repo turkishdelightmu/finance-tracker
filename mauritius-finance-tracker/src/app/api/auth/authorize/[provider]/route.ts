@@ -25,6 +25,14 @@ export async function GET(
   }
 
   const origin = url.origin;
+  const callbackURL =
+    url.searchParams.get("callbackURL") ||
+    url.searchParams.get("callbackUrl") ||
+    "/dashboard";
+  const newUserCallbackURL =
+    url.searchParams.get("newUserCallbackURL") ||
+    url.searchParams.get("newUserCallbackUrl") ||
+    callbackURL;
 
   if (provider === "google") {
     if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
@@ -47,7 +55,12 @@ export async function GET(
   const resp = await fetch(`${origin}/api/auth/sign-in/social`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ provider, disableRedirect: false }),
+    body: JSON.stringify({
+      provider,
+      disableRedirect: false,
+      callbackURL,
+      newUserCallbackURL,
+    }),
     redirect: "manual",
   });
 

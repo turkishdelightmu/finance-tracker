@@ -1,0 +1,11 @@
+{
+  "name": "finance-tracker-root",
+  "private": true,
+  "scripts": {
+    "dev": "npm --prefix mauritius-finance-tracker run dev",
+    "build": "npm --prefix mauritius-finance-tracker run build",
+    "start": "npm --prefix mauritius-finance-tracker run start",
+    "test": "npm --prefix mauritius-finance-tracker run test",
+    "lint": "npm --prefix mauritius-finance-tracker run lint"
+  }
+}

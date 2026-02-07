@@ -12,12 +12,29 @@ const URL_KEYS = [
 ] as const;
 
 function readFirstUrl() {
+  const invalidUrls: string[] = [];
+
   for (const key of URL_KEYS) {
     const value = (process.env[key] || "").trim();
     if (!value) continue;
     const cleaned = value.replace(/^["']+/, "").replace(/["']+$/, "");
-    return { key, value: cleaned };
+
+    try {
+      new URL(cleaned);
+      return { key, value: cleaned };
+    } catch (error) {
+      invalidUrls.push(
+        `${key}: ${(error as Error).message || "invalid URL format"}`,
+      );
+    }
   }
+
+  if (invalidUrls.length > 0) {
+    throw new Error(
+      `[db] Invalid database URL in ${invalidUrls.join("; ")}. Set a valid URL in one of: ${URL_KEYS.join(", ")}`,
+    );
+  }
+
   throw new Error(
     `[db] Missing database URL. Set one of: ${URL_KEYS.join(", ")}`,
   );
@@ -47,14 +64,6 @@ if (process.env.DEBUG_DB_URL === "1") {
       message: (error as Error).message,
     });
   }
-}
-
-try {
-  new URL(cleanedDatabaseUrl);
-} catch (error) {
-  throw new Error(
-    `[db] Invalid database URL in ${databaseUrlKey}: ${(error as Error).message}`,
-  );
 }
 
 const shouldUseNeon =

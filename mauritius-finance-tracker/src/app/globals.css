@@ -1,10 +1,14 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f7f7f2;
-  --foreground: #0f172a;
-  --card: #ffffff;
-  --accent: #0ea5e9;
+  --background: #060b1a;
+  --foreground: #e8efff;
+  --card: #0f1a33;
+  --card-2: #132245;
+  --accent: #4f7cff;
+  --accent-2: #2bd1c4;
+  --muted: #9fb0d6;
+  --border: rgba(168, 188, 255, 0.2);
 }
 
 @theme inline {
@@ -12,14 +16,19 @@
   --color-foreground: var(--foreground);
   --color-card: var(--card);
   --color-accent: var(--accent);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 body {
-  background: radial-gradient(circle at top, #e0f2fe 0%, #f7f7f2 48%, #f8fafc 100%);
+  background:
+    radial-gradient(1200px 600px at 0% -10%, #1f377a 0%, transparent 55%),
+    radial-gradient(1000px 500px at 100% -20%, #0c8d90 0%, transparent 45%),
+    linear-gradient(160deg, #050814 0%, #08122a 50%, #060b1a 100%);
   color: var(--foreground);
-  font-family: var(--font-sans), system-ui, sans-serif;
+  font-family: var(--font-sans), "Segoe UI", sans-serif;
   min-height: 100vh;
 }
 
@@ -29,4 +38,16 @@ body {
 
 input, select, textarea {
   color: inherit;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #8ea2cf;
+}
+
+.glass {
+  background: linear-gradient(160deg, rgba(27, 44, 84, 0.75), rgba(14, 24, 49, 0.72));
+  border: 1px solid var(--border);
+  box-shadow: 0 20px 60px rgba(2, 8, 23, 0.45);
+  backdrop-filter: blur(14px);
 }

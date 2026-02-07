@@ -83,61 +83,61 @@ export default async function DashboardPage() {
 
   return (
     <div className="space-y-6 pb-20">
-      <section className="rounded-3xl bg-white/90 border border-slate-200 p-6 shadow-sm">
-        <p className="text-sm uppercase tracking-[0.3em] text-slate-400">This month</p>
-        <h2 className="text-2xl font-semibold text-slate-900">
+      <section className="glass rounded-3xl p-6">
+        <p className="text-sm uppercase tracking-[0.3em] text-cyan-200/80">This month</p>
+        <h2 className="text-2xl font-semibold text-white">
           {now.toFormat("MMMM yyyy")}
         </h2>
         <div className="mt-4 grid gap-3">
           {totals.length === 0 && (
-            <p className="text-sm text-slate-500">No transactions yet.</p>
+            <p className="text-sm text-slate-300">No transactions yet.</p>
           )}
           {totals.map((item) => (
             <div key={item.category} className="flex items-center justify-between">
-              <span className="text-sm text-slate-600">{item.category}</span>
-              <span className="font-medium">{formatCurrency(item.amount)}</span>
+              <span className="text-sm text-slate-300">{item.category}</span>
+              <span className="font-medium text-white">{formatCurrency(item.amount)}</span>
             </div>
           ))}
         </div>
       </section>
 
       <section className="grid gap-4 md:grid-cols-2">
-        <div className="rounded-3xl bg-white/90 border border-slate-200 p-5">
-          <h3 className="text-lg font-semibold">Recent transactions</h3>
+        <div className="glass rounded-3xl p-5">
+          <h3 className="text-lg font-semibold text-white">Recent transactions</h3>
           <div className="mt-3 space-y-2">
             {transactions.length === 0 && (
-              <p className="text-sm text-slate-500">No recent activity.</p>
+              <p className="text-sm text-slate-300">No recent activity.</p>
             )}
             {transactions.map((tx: TxRow) => (
               <div key={tx.id} className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium">{tx.description}</p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-sm font-medium text-white">{tx.description}</p>
+                  <p className="text-xs text-slate-300">
                     {formatDate(tx.date)} · {tx.category?.name || "Uncategorized"}
                   </p>
                 </div>
-                <span className="text-sm font-semibold">
+                <span className="text-sm font-semibold text-cyan-200">
                   {formatCurrency(Number(tx.amount), tx.currency)}
                 </span>
               </div>
             ))}
           </div>
         </div>
-        <div className="rounded-3xl bg-white/90 border border-slate-200 p-5">
-          <h3 className="text-lg font-semibold">Upcoming bills</h3>
+        <div className="glass rounded-3xl p-5">
+          <h3 className="text-lg font-semibold text-white">Upcoming bills</h3>
           <div className="mt-3 space-y-2">
             {bills.length === 0 && (
-              <p className="text-sm text-slate-500">No upcoming bills.</p>
+              <p className="text-sm text-slate-300">No upcoming bills.</p>
             )}
             {bills.map((bill: BillRow) => (
               <div key={bill.id} className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium">{bill.name}</p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-sm font-medium text-white">{bill.name}</p>
+                  <p className="text-xs text-slate-300">
                     Next due {formatDate(bill.nextDueDate)}
                   </p>
                 </div>
-                <span className="text-sm font-semibold">
+                <span className="text-sm font-semibold text-cyan-200">
                   {formatCurrency(Number(bill.expectedAmount))}
                 </span>
               </div>
@@ -147,33 +147,33 @@ export default async function DashboardPage() {
       </section>
 
       <section className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-3xl bg-white/90 border border-slate-200 p-5">
-          <h3 className="text-lg font-semibold">Goals</h3>
-          <p className="text-3xl font-semibold mt-2">{goals.length}</p>
-          <p className="text-sm text-slate-500">Active savings goals</p>
+        <div className="glass rounded-3xl p-5">
+          <h3 className="text-lg font-semibold text-white">Goals</h3>
+          <p className="text-3xl font-semibold mt-2 text-cyan-200">{goals.length}</p>
+          <p className="text-sm text-slate-300">Active savings goals</p>
         </div>
-        <div className="rounded-3xl bg-white/90 border border-slate-200 p-5">
-          <h3 className="text-lg font-semibold">Loans</h3>
-          <p className="text-3xl font-semibold mt-2">{loans.length}</p>
-          <p className="text-sm text-slate-500">Tracked loans</p>
+        <div className="glass rounded-3xl p-5">
+          <h3 className="text-lg font-semibold text-white">Loans</h3>
+          <p className="text-3xl font-semibold mt-2 text-cyan-200">{loans.length}</p>
+          <p className="text-sm text-slate-300">Tracked loans</p>
         </div>
-        <div className="rounded-3xl bg-white/90 border border-slate-200 p-5">
-          <h3 className="text-lg font-semibold">Investments</h3>
-          <p className="text-3xl font-semibold mt-2">{formatCurrency(portfolioValue)}</p>
-          <p className="text-sm text-slate-500">Estimated portfolio value</p>
+        <div className="glass rounded-3xl p-5">
+          <h3 className="text-lg font-semibold text-white">Investments</h3>
+          <p className="text-3xl font-semibold mt-2 text-cyan-200">{formatCurrency(portfolioValue)}</p>
+          <p className="text-sm text-slate-300">Estimated portfolio value</p>
         </div>
       </section>
 
-      <section className="rounded-3xl bg-white/90 border border-slate-200 p-5">
-        <h3 className="text-lg font-semibold">Notifications</h3>
+      <section className="glass rounded-3xl p-5">
+        <h3 className="text-lg font-semibold text-white">Notifications</h3>
         <div className="mt-3 space-y-2">
           {notifications.length === 0 && (
-            <p className="text-sm text-slate-500">No notifications yet.</p>
+            <p className="text-sm text-slate-300">No notifications yet.</p>
           )}
           {notifications.map((note: NotificationRow) => (
-            <div key={note.id} className="border border-slate-200 rounded-xl p-3">
-              <p className="text-sm font-medium">{note.title}</p>
-              <p className="text-xs text-slate-500">{note.body}</p>
+            <div key={note.id} className="rounded-xl border border-white/10 bg-black/10 p-3">
+              <p className="text-sm font-medium text-white">{note.title}</p>
+              <p className="text-xs text-slate-300">{note.body}</p>
             </div>
           ))}
         </div>
