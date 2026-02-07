@@ -10,6 +10,30 @@ export default function LoginPage() {
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
 
+  async function handleGoogleSignIn() {
+    setError(null);
+    const response = await fetch("/api/auth/sign-in/social", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        provider: "google",
+        disableRedirect: true,
+        callbackURL: "/dashboard",
+        newUserCallbackURL: "/dashboard",
+      }),
+    });
+
+    const data = await response.json().catch(() => ({}));
+    const redirectUrl = typeof data?.url === "string" ? data.url : null;
+
+    if (!response.ok || !redirectUrl) {
+      setError(data?.message || data?.error || "Google sign-in failed.");
+      return;
+    }
+
+    window.location.href = redirectUrl;
+  }
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError(null);
@@ -62,13 +86,8 @@ export default function LoginPage() {
       <h2 className="text-xl font-semibold">Welcome back</h2>
       <div className="space-y-3">
         <button
-          onClick={async () => {
-            try {
-              window.location.href = '/api/auth/authorize/google';
-            } catch (e) {
-              // noop
-            }
-          }}
+          type="button"
+          onClick={handleGoogleSignIn}
           className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-2 hover:shadow-sm"
         >
           <svg width="18" height="18" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>

@@ -51,20 +51,45 @@ export async function destroySession() {
 export async function getCurrentUser() {
   const cookieStore = await cookies();
   const token = cookieStore.get(SESSION_COOKIE_NAME)?.value;
-  if (!token) return null;
+  if (token) {
+    const session = await prisma.session.findUnique({
+      where: { token },
+      include: { user: true },
+    });
 
-  const session = await prisma.session.findUnique({
-    where: { token },
-    include: { user: true },
-  });
-
-  if (!session) return null;
-  if (session.expiresAt.getTime() < Date.now()) {
-    await prisma.session.deleteMany({ where: { token } });
-    return null;
+    if (session && session.expiresAt.getTime() >= Date.now()) {
+      return session.user;
+    }
+    if (session && session.expiresAt.getTime() < Date.now()) {
+      await prisma.session.deleteMany({ where: { token } });
+    }
   }
 
-  return session.user;
+  // Fallback for Better Auth social login sessions (e.g., Google OAuth).
+  const allCookies = cookieStore.getAll();
+  if (allCookies.length === 0) return null;
+  const cookieHeader = allCookies
+    .map(({ name, value }) => `${name}=${encodeURIComponent(value)}`)
+    .join("; ");
+
+  const authBaseUrl =
+    process.env.BETTER_AUTH_URL ||
+    process.env.NEXT_PUBLIC_APP_URL ||
+    "http://localhost:3000";
+  const resp = await fetch(`${authBaseUrl}/api/auth/get-session`, {
+    method: "GET",
+    headers: { cookie: cookieHeader },
+    cache: "no-store",
+  }).catch(() => null);
+
+  if (!resp?.ok) return null;
+  const data = await resp.json().catch(() => null) as {
+    user?: { id?: string };
+  } | null;
+  const userId = data?.user?.id;
+  if (!userId) return null;
+
+  return prisma.user.findUnique({ where: { id: userId } });
 }
 
 export async function requireUser() {

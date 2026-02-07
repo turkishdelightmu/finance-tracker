@@ -7,6 +7,23 @@ export async function GET(
 ) {
   const { provider } = await params;
   const url = new URL(request.url);
+
+  // OAuth state cookies are host-bound. If auth starts on 127.0.0.1 but
+  // Better Auth is configured for localhost (or vice versa), callback state
+  // verification fails with `state_mismatch`.
+  const configuredBase =
+    process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_APP_URL;
+  if (configuredBase) {
+    const canonicalBase = new URL(configuredBase);
+    if (url.origin !== canonicalBase.origin) {
+      const canonicalUrl = new URL(
+        `${url.pathname}${url.search}`,
+        canonicalBase,
+      );
+      return NextResponse.redirect(canonicalUrl);
+    }
+  }
+
   const origin = url.origin;
 
   if (provider === "google") {
@@ -34,11 +51,33 @@ export async function GET(
     redirect: "manual",
   });
 
-  // If Better Auth returned a Location header to redirect the user to the
-  // provider authorization page, forward that redirect to the browser.
-  const location = resp.headers.get("Location");
-  if (location) {
-    return NextResponse.redirect(location);
+  let redirectUrl = resp.headers.get("location");
+
+  // Some Better Auth versions return a JSON body with `url` instead of a
+  // Location header, even when redirects are enabled.
+  if (!redirectUrl) {
+    const contentType = resp.headers.get("content-type") || "";
+    if (contentType.includes("application/json")) {
+      const data = await resp.json().catch(() => null) as { url?: unknown } | null;
+      if (typeof data?.url === "string" && data.url.length > 0) {
+        redirectUrl = data.url;
+      }
+    }
+  }
+
+  if (redirectUrl) {
+    const redirectResponse = NextResponse.redirect(redirectUrl);
+    const headersWithSetCookie = resp.headers as Headers & {
+      getSetCookie?: () => string[];
+    };
+
+    // Preserve OAuth state cookies created by Better Auth before redirect.
+    const setCookies = headersWithSetCookie.getSetCookie?.() ?? [];
+    for (const value of setCookies) {
+      redirectResponse.headers.append("set-cookie", value);
+    }
+
+    return redirectResponse;
   }
 
   // Otherwise return the JSON response (contains `url` when disableRedirect=true)
