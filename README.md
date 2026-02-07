@@ -1,174 +1,180 @@
-# Mauritius Personal Finance Tracker
+# Mauritius Finance Tracker
 
-Mobile-first MVP for tracking spending, bills, goals, loans, and investments in Mauritius.
+Mobile-first personal finance app built with Next.js, Prisma, and Better Auth.
 
-## Stack
-- Next.js (App Router) + TypeScript + Tailwind
-- PostgreSQL + Prisma
-- Auth: email/password
-- Validation: zod
+## What Is Implemented
 
-## Local setup
+- Authentication:
+  - Email/password login and registration
+  - Google OAuth login
+  - Logout and protected app routes
+- Finance modules:
+  - Dashboard
+  - Transactions (manual create/delete/category updates)
+  - CSV transaction import with dry-run
+  - Bills (create, mark paid, activate/deactivate)
+  - Goals (create, contribute)
+  - Loans (create, record payments, override balance)
+  - Investments (accounts, holdings, transactions, price updates)
+  - Comments
+- Background job:
+  - Daily bill reminder cron endpoint: `POST /api/cron/daily`
+- Security:
+  - CSRF token/cookie protection
+  - Basic rate limiting on auth endpoints
+  - Security headers + CSP via proxy/middleware
+  - Audit event logging for auth actions
+
+## Tech Stack
+
+- Next.js 16 (App Router, TypeScript)
+- Prisma + PostgreSQL (Neon-compatible)
+- Better Auth (`better-auth`)
+- Tailwind CSS 4
+- Zod validation
+- Vitest tests
+
+## Project Structure
+
+- `src/app/(auth)` login/register UI
+- `src/app/(app)` authenticated app pages
+- `src/app/api` API routes
+- `src/domains/*/service.ts` domain logic per module
+- `src/lib` shared utilities (auth, csrf, rate limit, formatting, etc.)
+- `prisma/schema.prisma` database schema
+- `prisma/migrations` migration history
+
+## Prerequisites
+
+- Node.js `>=20.9.0`
+- npm
+- PostgreSQL database (or Neon)
+
+## Environment Variables
+
+Use `.env` for local development.
+
+Required:
+
+- `DATABASE_URL`
+- `BETTER_AUTH_SECRET`
+- `BETTER_AUTH_URL`
+- `NEXT_PUBLIC_APP_URL`
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `CRON_SECRET` (for cron endpoint protection)
+
+Recommended local values:
+
+- `BETTER_AUTH_URL=http://localhost:3000`
+- `NEXT_PUBLIC_APP_URL=http://localhost:3000`
+
+## Local Setup (Step by Step)
+
 1. Install dependencies
+
 ```bash
 npm install
 ```
 
-2. Configure environment
-Create `.env` with:
-```
-DATABASE_URL="postgresql://USER:PASSWORD@localhost:5432/mauritius_finance"
-DIRECT_URL="postgresql://USER:PASSWORD@localhost:5432/mauritius_finance"
-CRON_SECRET="your-random-secret"
-BETTER_AUTH_SECRET="your-long-random-secret"
-GOOGLE_CLIENT_ID="optional"
-GOOGLE_CLIENT_SECRET="optional"
-```
-`DIRECT_URL` should be a non-pooled connection string for migrations when using Neon.
-The app will automatically use the Neon adapter when `DATABASE_URL` contains `neon.tech`.
+2. Configure `.env`
 
-3. Run migrations and seed
+- Set database URL and auth/oauth secrets.
+
+3. Generate Prisma client
+
 ```bash
-npx prisma migrate dev --name init
 npx prisma generate
+```
+
+4. Apply migrations
+
+```bash
+npx prisma migrate deploy
+```
+
+5. (Optional) seed data
+
+```bash
 npx prisma db seed
 ```
 
-4. Start the app
+6. Start app
+
 ```bash
 npm run dev
 ```
 
-Open http://127.0.0.1:3000
+7. Open
 
-## Demo login
-Demo user is **disabled by default**. To enable locally, set:
-```
-ENABLE_DEMO_USER="true"
-```
-Then run `npx prisma db seed`.
+- `http://localhost:3000`
 
-## CSV import
-Go to Transactions → Import CSV. Map columns to fields and import. Dates accept `dd/mm/yyyy` or ISO. Use dry-run to validate rows before writing.
+## Google OAuth Setup
 
-## Bill reminders job
-Create a daily cron at **08:00 Mauritius time** that calls:
-```
-POST /api/cron/daily
-x-cron-secret: <CRON_SECRET>
-```
-The job creates in-app notifications and email placeholders for due bills.
+In Google Cloud Console (OAuth client):
+
+- Authorized JavaScript origins:
+  - `http://localhost:3000`
+  - `https://mauritius-finance-tracker.vercel.app`
+- Authorized redirect URIs:
+  - `http://localhost:3000/api/auth/callback/google`
+  - `https://mauritius-finance-tracker.vercel.app/api/auth/callback/google`
+
+In Vercel env vars (Production):
+
+- `GOOGLE_CLIENT_ID`
+- `GOOGLE_CLIENT_SECRET`
+- `BETTER_AUTH_URL=https://mauritius-finance-tracker.vercel.app`
+- `NEXT_PUBLIC_APP_URL=https://mauritius-finance-tracker.vercel.app`
+- `BETTER_AUTH_SECRET=<strong-random-secret>`
+- `AUTH_SECRET=<same-as-BETTER_AUTH_SECRET>`
+
+After env changes, redeploy.
+
+## Step-by-Step Practice Flow
+
+Use this checklist to validate the product end-to-end.
+
+1. Create account or sign in with Google at `/login`.
+2. Confirm redirect to `/dashboard`.
+3. Create a transaction at `/transactions`.
+4. Import a CSV from `/transactions/import`:
+   - Run dry-run first
+   - Then run real import
+5. Create a bill at `/bills` and mark it paid.
+6. Create a goal at `/goals` and add a contribution.
+7. Create a loan at `/loans` and record a payment.
+8. Create an investment account + holding at `/investments`.
+9. Add a comment at `/comments`.
+10. Log out and confirm return to `/login`.
+
+## API Endpoints (Key)
+
+- `POST /api/auth/register`
+- `POST /api/auth/login`
+- `POST /api/auth/logout`
+- `GET/POST /api/auth/authorize/[provider]`
+- `POST /api/transactions/import`
+- `POST /api/cron/daily` (requires header: `x-cron-secret`)
 
 ## Tests
+
+Run:
+
 ```bash
 npm test
 ```
 
-## Notes
-- Currency defaults to `MUR`.
-- Dates displayed as `dd/mm/yyyy` in `Indian/Mauritius` timezone.
-- Email reminders are logged as notifications in MVP; integrate a provider later.
-- Passwords must be at least 8 characters and include a letter + number.
-- Basic security headers, CSRF protection, and rate limiting are enabled for auth routes.
-- Audit events are recorded for key actions (auth, transactions, bills, goals, loans, investments).
+Includes utility and domain-level tests under `tests/`.
 
-## Architecture (MVP, scalable)
-- UI (App Router pages) call **domain services** instead of direct Prisma access.
-- Each domain keeps a simple, readable folder: `schema.ts` + `service.ts` (no extra layers).
-- Prisma + auditing are shared utilities (`src/lib/*`), keeping data access consistent.
-- Future scale path: replace module internals with service/repository layers without touching UI.
+## Deployment Notes (Vercel)
 
-## Deployment
+1. Set all required environment variables in Vercel.
+2. Deploy.
+3. Run migrations against production DB:
 
-### Environment checklist (production)
-- `DATABASE_URL` (Neon pooled URL or standard Postgres URL)
-- `DIRECT_URL` (non-pooled URL for migrations; required for Neon)
-- `CRON_SECRET` (random secret for `/api/cron/daily`)
-- `BETTER_AUTH_SECRET` (required for Better Auth)
-- `ENABLE_DEMO_USER` should be **unset** or `false` in production
-
-### Vercel (primary path)
-1. Create a new Vercel project and import this repo.
-2. Set the environment variables above in Vercel.
-3. Deploy.
-4. Run migrations from CI (recommended) or locally:
-   ```bash
-   npx prisma migrate deploy
-   npx prisma generate
-   npx prisma db seed
-   ```
-
-### Render (optional alternative)
-1. Create a new Web Service and connect your repo.
-2. Set environment variables in Render.
-3. Build command:
-   ```bash
-   npm install && npm run build
-   ```
-4. Start command:
-   ```bash
-   npm run start
-   ```
-5. Run migrations from a one-off job or locally:
-   ```bash
-   npx prisma migrate deploy
-   npx prisma generate
-   npx prisma db seed
-   ```
-
-### CI migration step
-Add a deploy-time step in your CI/CD pipeline:
 ```bash
 npx prisma migrate deploy
-npx prisma generate
 ```
-Notes:
-- `migrate deploy` is idempotent and safe to run on every deploy.
-- Run `db seed` only for first-time environments or when you want demo data.
 
-### GitHub Actions (Vercel)
-Minimal workflow: `.github/workflows/vercel-deploy.yml`
-Required GitHub Secrets:
-- `VERCEL_TOKEN`
-- `VERCEL_ORG_ID`
-- `VERCEL_PROJECT_ID`
-- `DATABASE_URL`
-- `DIRECT_URL`
-
-Migrations run **only on production deploys** (main branch). Preview deploys skip migrations.
-
-### Production notes
-- Use a **non-pooled** connection string for `DIRECT_URL` (Neon).
-- Keep `CRON_SECRET` private and rotate if exposed.
-- Schedule the daily bill reminder job at **08:00 Mauritius time** and send the secret in `x-cron-secret`.
-- Consider setting `NODE_ENV=production` and enabling HTTPS-only cookies in your hosting provider.
-
-### Go-live checklist
-- Custom domain configured and HTTPS verified.
-- Environment variables set in Vercel.
-- Database migrated (`prisma migrate deploy`) and client generated.
-- Cron scheduled for bill reminders.
-- Admin user created (do not enable demo user in production).
-
-### Rollback plan
-- Redeploy a previous commit from the Vercel dashboard or by re-running the workflow on an earlier SHA.
-- If a migration fails: fix forward (new migration) or revert the deploy without running new migrations.
-
-## Production Acceptance Test (10 min)
-- Login
-- Add a Transaction
-- CSV import dry-run + import
-- Create a Bill + mark paid
-- Create a Goal + contribute
-- Create a Loan + record a payment
-
-## Cron setup (Mauritius time)
-Daily 08:00 MUT = 04:00 UTC
-- **Vercel Cron** (if available):
-  - Schedule: `0 4 * * *` (UTC)
-  - URL: `https://<domain>/api/cron/daily`
-  - Header: `x-cron-secret: <CRON_SECRET>`
-- **External scheduler** (alternative):
-  - Any scheduler (GitHub Actions, UptimeRobot, cron-job.org) calling:
-    - `POST https://<domain>/api/cron/daily`
-    - Header `x-cron-secret: <CRON_SECRET>`
+4. Verify Google sign-in and dashboard redirect in production.
