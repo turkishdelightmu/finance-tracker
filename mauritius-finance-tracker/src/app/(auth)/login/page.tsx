@@ -17,15 +17,14 @@ export default function LoginPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         provider: "google",
-        disableRedirect: true,
         callbackURL: "/dashboard",
         newUserCallbackURL: "/dashboard",
+        disableRedirect: false,
       }),
     });
 
     const data = await response.json().catch(() => ({}));
     const redirectUrl = typeof data?.url === "string" ? data.url : null;
-
     if (!response.ok || !redirectUrl) {
       setError(data?.message || data?.error || "Google sign-in failed.");
       return;
@@ -83,12 +82,12 @@ export default function LoginPage() {
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl font-semibold">Welcome back</h2>
+      <h2 className="text-xl font-semibold text-white">Welcome back</h2>
       <div className="space-y-3">
         <button
           type="button"
           onClick={handleGoogleSignIn}
-          className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-4 py-2 hover:shadow-sm"
+          className="flex w-full items-center justify-center gap-3 rounded-xl border border-white/20 bg-white/10 px-4 py-2 text-slate-100 transition hover:bg-white/15"
         >
           <svg width="18" height="18" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
             <path fill="#EA4335" d="M24 9.5c3.9 0 6.6 1.7 8.2 3.1l6-5.8C34.8 4 29.8 2 24 2 14.6 2 6.9 7.2 3.6 15.2l7.4 5.7C12 15 17.5 9.5 24 9.5z" />
@@ -98,45 +97,45 @@ export default function LoginPage() {
           </svg>
           <span className="text-sm font-medium">Continue with Google</span>
         </button>
-        <div className="text-center text-sm text-slate-400">or</div>
+        <div className="text-center text-sm text-slate-300">or</div>
       </div>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="text-sm font-medium">Email</label>
+          <label className="text-sm font-medium text-slate-100">Email</label>
           <input
             name="email"
             type="email"
             required
-            className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2"
+            className="mt-2 w-full rounded-xl border border-white/20 bg-slate-900/40 px-4 py-2 text-slate-100"
           />
           {fieldErrors.email && (
-            <p className="text-xs text-rose-600 mt-1">{fieldErrors.email}</p>
+            <p className="text-xs text-rose-300 mt-1">{fieldErrors.email}</p>
           )}
         </div>
         <div>
-          <label className="text-sm font-medium">Password</label>
+          <label className="text-sm font-medium text-slate-100">Password</label>
           <input
             name="password"
             type="password"
             required
-            className="mt-2 w-full rounded-xl border border-slate-200 px-4 py-2"
+            className="mt-2 w-full rounded-xl border border-white/20 bg-slate-900/40 px-4 py-2 text-slate-100"
           />
           {fieldErrors.password && (
-            <p className="text-xs text-rose-600 mt-1">{fieldErrors.password}</p>
+            <p className="text-xs text-rose-300 mt-1">{fieldErrors.password}</p>
           )}
         </div>
-        {error && <p className="text-sm text-rose-600">{error}</p>}
+        {error && <p className="text-sm text-rose-300">{error}</p>}
         <button
           type="submit"
           disabled={loading}
-          className="w-full rounded-xl bg-slate-900 text-white py-2 font-medium"
+          className="w-full rounded-xl bg-gradient-to-r from-indigo-500 to-cyan-400 py-2 font-semibold text-white"
         >
           {loading ? "Signing in..." : "Sign in"}
         </button>
       </form>
-      <p className="text-sm text-slate-500">
+      <p className="text-sm text-slate-300">
         New here?{" "}
-        <a className="text-slate-900 font-medium" href="/register">
+        <a className="font-medium text-white" href="/register">
           Create an account
         </a>
       </p>
